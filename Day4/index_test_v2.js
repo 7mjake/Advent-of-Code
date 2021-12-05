@@ -1,10 +1,22 @@
-let drawnNumbers = [7,4,9,5,11,17,23,2,0,14,21,19,24,10,16,13,6,15,25,12,22,18,20,8,3,26,1];
+let drawnNumbers = [7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1];
 
-let bingoWins = ['0 1 2 3 4', '5 6 7 8 9', '10 11 12 13 14', '15 16 17 18 19', '20 21 22 23 24', '0 5 10 15 20', '1 6 11 16 21', '2 7 12 17 22', '3 8 13 18 23', '4 9 14 19 24'];
+let horizontalWin1 = [0,1,2,3,4];
+let horizontalWin2 = [5,6,7,8,9];
+let horizontalWin3 = [10,11,12,13,14];
+let horizontalWin4 = [15,16,17,18,19];
+let horizontalWin5 = [20,21,22,23,24];
+
+let verticalWin1 = [0,5,10,15,20];
+let verticalWin2 = [1,6,11,16,21];
+let verticalWin3 = [2,7,12,27,22];
+let verticalWin4 = [3,8,13,18,23];
+let verticalWin5 = [4,9,14,19,24];
+
+let allWins = [horizontalWin1, horizontalWin2, horizontalWin3, horizontalWin4, horizontalWin5, verticalWin1, verticalWin2, verticalWin3, verticalWin4, verticalWin5];
 
 let bingoBoardsInput = '\
-22 13 17 24  0 \
- 8  2 23  4 11 \
+22 13 17 11  0 \
+ 8  2 23  4 24 \
 21  9 14 16  7 \
  6 10  3 18  5 \
  1 12 20 15 19 \
@@ -31,7 +43,6 @@ console.log(formattedBingoBoards);
 let boardNumber = 0;
 let boards = [];
 
-console.log(formattedBingoBoards.length);
 
 // this for statement runs through all the boards (i increments by 25 with each loop)
 for (i = 0; formattedBingoBoards[i] != undefined; i++) {
@@ -50,10 +61,9 @@ for (i = 0; formattedBingoBoards[i] != undefined; i++) {
     boards[boardNumber] = currentBoard;
 
     boardNumber++
-    console.log(i)
 }
 
-console.log(boards);
+//console.log(boards);
 
 // this creates a new copy of the boards so that I can replace each called number without messing up the original boards
 let boardsDynamic = [];
@@ -61,19 +71,25 @@ for (i = 0; i < boards.length; i++) {
     boardsDynamic[i] = [...boards[i]];
 }
 
+let boardsDynamicIndex = [];
+
 let winningBoard;
 let winningPattern;
 let bingoCheck = [];
 let finalDrawing;
+let winningBoardMarks;
 
 // this loops through each drawn number and replaces that number with 'DRAWN' on each board
 drawingLoop:
 for (i = 0; i < drawnNumbers.length; i++) {
 
-    
+
+    boardsDynamicIndex = [];
 
     // cycles through each board
     for (n = 0; n < boardsDynamic.length; n++) {
+
+
 
         // checks if board contains drawn number and replaces it with X
         if (boardsDynamic[n].includes(drawnNumbers[i])) {
@@ -83,50 +99,73 @@ for (i = 0; i < drawnNumbers.length; i++) {
             }
         }
 
-        let markedSpots = '';
 
+        let markedSpots = [];
         // this tracks the indexes of marked spots for each board
         for (j = 0; j < boardsDynamic[n].length; j++) {
+
             if (boardsDynamic[n][j] == 'X') {
-                markedSpots = markedSpots.concat(' ' + j);
+                markedSpots.push(j);
             }
 
         }
 
-        bingoCheck[n] = markedSpots;
+        //boardsDynamicIndex.push(markedSpots);
+        console.log(markedSpots);
+        console.log ('board ' + n)
 
-    }
+        let bingo = false;
 
-    console.log('Bingo Check: ' + bingoCheck);
-
-    // check marked spots against bingoWins list
-    for (n = 0; n < bingoCheck.length; n++) {
-
-        for (j = 0; j < bingoWins.length; j++) {
-            if (bingoCheck[n].includes(bingoWins[j])) {
-                console.log('We have a winner! Board: ' + n);
+        for (m = 0; allWins.length > m; m++) {
+            
+            for (v = 0; allWins[m].length > v; v++) {
+                console.log('Win Condition ' + m +'.' + v)
+                
+                if (markedSpots.includes(allWins[m][v])) {
+                    bingo = true;
+                } else {
+                    bingo = false;
+                    break;
+                }
+        
+            }
+        
+            console.log('bingo ' + bingo);
+        
+            if (bingo) {
+                winningBoardMarks = markedSpots;
                 winningBoard = n;
-                winningPattern = bingoWins[j];
                 finalDrawing = drawnNumbers[i];
                 break drawingLoop;
+                
             }
+            
         }
 
     }
 
 }
 
-let winningBoardIndex = bingoCheck[winningBoard].split(' ').slice(1).map(Number);
+
+
+//let winningBoardIndex = markedSpots;
+//.split(' ').slice(1).map(Number);
+
+console.log('Board ' + winningBoard + ' wins!');
+console.log(winningBoardMarks);
 
 let sumOfFullBoard = 0;
 for (i = 0; i < boards[winningBoard].length; i++) {
     sumOfFullBoard = sumOfFullBoard + boards[winningBoard][i];
 }
 
+console.log(sumOfFullBoard);
+
 let sumOfMarked = 0;
-for (i = 0; i < winningBoardIndex.length; i++) {
-    sumOfMarked = sumOfMarked + boards[winningBoard][winningBoardIndex[i]];
+for (i = 0; i < winningBoardMarks.length; i++) {
+    sumOfMarked = sumOfMarked + boards[winningBoard][winningBoardMarks[i]];
 }
+console.log((sumOfFullBoard - sumOfMarked));
 console.log((sumOfFullBoard - sumOfMarked) * finalDrawing);
 
 console.log(finalDrawing)
