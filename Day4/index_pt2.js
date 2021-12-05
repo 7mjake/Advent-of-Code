@@ -462,27 +462,38 @@ let winningPattern;
 let bingoCheck = [];
 let finalDrawing;
 let winningBoardMarks;
+let loopCycles = 0;
+let removeBoard = false;
 
 // this loops through each drawn number and replaces that number with 'DRAWN' on each board
 drawingLoop:
-for (i = 0; i < drawnNumbers.length; i++) {
+for (i = 0; i < drawnNumbers.length && boards.length > 0; i++) {
 
+    console.log(drawnNumbers[i]);
 
     boardsDynamicIndex = [];
 
     // cycles through each board
-    for (n = 0; n < boardsDynamic.length; n++) {
-
-
+    boardsloop:
+    for (n = 0; n < boardsDynamic.length; n++) {        
+        
+        //if (boards[n][0] == 'remove') {
+            //break boardsloop;
+        //}
 
         // checks if board contains drawn number and replaces it with X
         if (boardsDynamic[n].includes(drawnNumbers[i])) {
             let index = boardsDynamic[n].indexOf(drawnNumbers[i]);
             if (index != -1) {
+                console.log(drawnNumbers[i] + ' removed from ' + boards[n]);
                 boardsDynamic[n][index] = 'X';
             }
-        }
+        
+        } 
 
+        
+
+        //console.log(boardsDynamic);
 
         let markedSpots = [];
         // this tracks the indexes of marked spots for each board
@@ -495,11 +506,10 @@ for (i = 0; i < drawnNumbers.length; i++) {
         }
 
         //boardsDynamicIndex.push(markedSpots);
-        console.log(markedSpots);
-        console.log ('board ' + n)
+        //console.log(markedSpots);
+        //console.log ('board ' + n)
 
-        // check this board for bingos at this time
-        let bingo = false;
+        let bingo = true;
 
         for (m = 0; allWins.length > m; m++) {
             
@@ -517,11 +527,24 @@ for (i = 0; i < drawnNumbers.length; i++) {
         
             //console.log('bingo ' + bingo);
         
-            if (bingo) {
-                //console.log('Win Condition ' + m +'.' + v)
+            if (bingo && boards.length > 1) {
+                boards.splice(n, 1);
+                boardsDynamic.splice(n, 1);
+                //boards[n].unshift('remove');
+                //boardsDynamic[n].unshift('remove');
                 winningBoardMarks = markedSpots;
                 winningBoard = n;
+                finalDrawing = drawnNumbers[i + 1];
+                console.log('REMOVED BOARD ' + n)
+                console.log(boardsDynamic);
+                i--;
+                break boardsloop;
+                
+            } else if (bingo && boards.length == 1) {
+                winningBoard = n;
                 finalDrawing = drawnNumbers[i];
+                winningBoardMarks = markedSpots;
+                console.log('Board ' + winningBoard + ' loses!');
                 break drawingLoop;
                 
             }
@@ -529,28 +552,29 @@ for (i = 0; i < drawnNumbers.length; i++) {
         }
 
     }
-
+loopCycles++
 }
 
-
-
-//let winningBoardIndex = markedSpots;
-//.split(' ').slice(1).map(Number);
+console.log(boards);
+console.log(boardsDynamic[0][22]);
+console.log(winningBoardMarks);
+console.log('Loop Cycles ' + loopCycles)
 
 console.log('Board ' + winningBoard + ' wins!');
-console.log(winningBoardMarks);
 
 let sumOfFullBoard = 0;
 for (i = 0; i < boards[winningBoard].length; i++) {
     sumOfFullBoard = sumOfFullBoard + boards[winningBoard][i];
 }
 
-console.log(sumOfFullBoard);
+console.log('Full ' + sumOfFullBoard);
 
 let sumOfMarked = 0;
 for (i = 0; i < winningBoardMarks.length; i++) {
     sumOfMarked = sumOfMarked + boards[winningBoard][winningBoardMarks[i]];
 }
+console.log('Marked ' + sumOfMarked);
+
 console.log((sumOfFullBoard - sumOfMarked));
 console.log((sumOfFullBoard - sumOfMarked) * finalDrawing);
 
