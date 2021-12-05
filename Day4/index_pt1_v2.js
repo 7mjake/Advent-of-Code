@@ -498,6 +498,7 @@ for (i = 0; i < drawnNumbers.length; i++) {
         console.log(markedSpots);
         console.log ('board ' + n)
 
+        // check this board for bingos at this time
         let bingo = false;
 
         for (m = 0; allWins.length > m; m++) {
