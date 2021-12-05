@@ -443,7 +443,7 @@ let winningPattern;
 let bingoCheck = [];
 let finalDrawing;
 
-// this loops through each drawn number and replaces that number with 'DRAWN' on each board
+// this loops through each drawn number and replaces that number with 'X' on each board
 drawingLoop:
 for (i = 0; i < drawnNumbers.length; i++) {
 
