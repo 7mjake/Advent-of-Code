@@ -28,6 +28,7 @@ input.forEach(
                 riskValue: Number(b),
                 connections: [],
                 visited: false,
+                lowestPathToHere: Infinity,
             };
             if (i != 0) {
                 graph[i + ',' + j].connections.push((i - 1) + ',' + j)
@@ -52,11 +53,12 @@ for (x in graph) {
         //return graph[a]['riskValue'] - graph[b]['riskValue']
         //return ((Math.abs((maxY / 2) - (b.split(',')[0]))) + (Math.abs((maxX / 2) - (b.split(',')[1])))) - ((Math.abs((maxY / 2) - (a.split(',')[0]))) + (Math.abs((maxX / 2) - (a.split(',')[1]))))
         return (b.split(',')[0] + b.split(',')[1]) - (a.split(',')[0] + a.split(',')[1])
+        //return (b.split(',')[0] + b.split(',')[1] - Math.abs(b.split(',')[0] - b.split(',')[1])) - (a.split(',')[0] + a.split(',')[1] - Math.abs(a.split(',')[0] - a.split(',')[1]))
     })
 }
 
 
-//onsole.log(graph)
+//console.log(graph)
 
 graph['0,0']['riskValue'] = 0;
 
@@ -96,7 +98,8 @@ function navigate(currentNode) {
     tempRisk += graph[currentNode]['riskValue']
     graph[currentNode]['visited'] = true
 
-    if (currentNode != finalNode && tempRisk < lowestRisk) {
+    if (currentNode != finalNode && tempRisk < lowestRisk && tempRisk < graph[currentNode]['lowestPathToHere']) {
+        graph[currentNode]['lowestPathToHere'] = tempRisk
         graph[currentNode]['connections'].forEach(a => {
 
             if (graph[a]['visited'] == false) {
@@ -118,8 +121,8 @@ function navigate(currentNode) {
 
 navigate('0,0')
 //console.log(graph)
-console.log('count = ' + count)
+//console.log('count = ' + count)
 //console.log(lowestPath)
-console.log(lowestRisk)
+console.log('Final: ' + lowestRisk)
 
 
