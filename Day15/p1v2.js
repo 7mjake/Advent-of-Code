@@ -4,7 +4,7 @@ const internal = require('stream');
 const { compileFunction } = require('vm');
 
 // split into into 1D array of caves
-let input = fs.readFileSync("./Day15/testInput.txt")
+let input = fs.readFileSync("./Day15/realInput.txt")
     .toString()
     .trim()
     .split(/\n/)
@@ -99,15 +99,10 @@ function navigate(currentNode) {
     if (currentNode != finalNode && tempRisk < lowestRisk) {
         graph[currentNode]['connections'].forEach(a => {
 
-            for (b in graph) {
-                if (currentPath.indexOf(b) == -1) {
-                    graph[b]['visited'] = false;
-                }
-            }
-
             if (graph[a]['visited'] == false) {
                 navigate(a)
                 tempRisk -= graph[currentPath[currentPath.length - 1]]['riskValue']
+                graph[currentPath[currentPath.length - 1]]['visited'] = false
                 currentPath.pop()
             }
         }
@@ -118,6 +113,7 @@ function navigate(currentNode) {
         console.log(tempRisk)
         lowestRisk = tempRisk
     }
+
 }
 
 navigate('0,0')
